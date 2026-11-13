@@ -2,8 +2,6 @@
 set -e
 
 main() {
-  need_cmd curl
-
   # Check if CYFRINUP_ONLY_INSTALL is set and its value
   if [ -n "$CYFRINUP_ONLY_INSTALL" ]; then
     case "$CYFRINUP_ONLY_INSTALL" in
@@ -14,12 +12,12 @@ main() {
         install_package "safe-hash"
         ;;
       *)
-        err "Invalid value for CYFRINUP_ONLY_INSTALL. It must be either 'aderyn' or 'safe-hash'."
+        err "Invalid value for CYFRINUP_ONLY_INSTALL. The only supported value is 'safe-hash'."
         ;;
     esac
   else
-    # Default behavior: Install all the tools
-    install_package "aderyn"
+    # Default behavior: Install maintained tools only.
+    warn "Aderyn has been retired and is no longer maintained. Please uninstall any existing Aderyn installation."
     install_package "safe-hash"
   fi
 }
@@ -29,12 +27,10 @@ install_package() {
 
   case "$package" in
     "aderyn")
-      say "Installing latest Aderyn"
-      ensure curl --proto '=https' --tlsv1.2 -LsSf https://github.com/cyfrin/aderyn/releases/latest/download/aderyn-installer.sh | bash
-      rm -f ~/.cyfrin/bin/aderyn
-      say "Aderyn installation complete!"
+      err "Aderyn has been retired and is no longer maintained. Cyfrinup no longer installs or updates it. Please uninstall any existing Aderyn installation."
       ;;
     "safe-hash")
+      need_cmd curl
       say "Installing latest Safe-Hash"
       ensure curl --proto '=https' --tlsv1.2 -LsSf https://github.com/cyfrin/safe-hash-rs/releases/latest/download/safe-hash-installer.sh | bash
       say "Safe-Hash installation complete!"

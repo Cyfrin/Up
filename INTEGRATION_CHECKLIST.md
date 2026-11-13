@@ -23,4 +23,5 @@ No other kind of change is allowed.
 
 ## Misc. Info
 
-- Aderyn VS Code extension depends on `CYFRINUP_ONLY_INSTALL` guard to protect the users from potentially failing build scripts of other tools. For example, it sets the value of the env variable **CYFRINUP_ONLY_INSTALL** to **aderyn** . This way, only aderyn would be installed.
+- Older Aderyn VS Code extensions set `CYFRINUP_ONLY_INSTALL=aderyn`. Preserve this value as an explicit retirement error so these callers never install another tool as a fallback.
+- `CYFRINUP_ONLY_INSTALL=safe-hash` continues to install Safe-Hash. The default invocation warns that Aderyn is retired and installs Safe-Hash only.
