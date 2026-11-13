@@ -17,8 +17,8 @@ main() {
     esac
   else
     # Default behavior: Install maintained tools only.
-    warn "Aderyn has been retired and is no longer maintained. Please uninstall any existing Aderyn installation."
     install_package "safe-hash"
+    aderyn_retirement_notice
   fi
 }
 
@@ -27,7 +27,8 @@ install_package() {
 
   case "$package" in
     "aderyn")
-      err "Aderyn has been retired and is no longer maintained. Cyfrinup no longer installs or updates it. Please uninstall any existing Aderyn installation."
+      aderyn_retirement_notice
+      err "Aderyn was not installed: it has been retired."
       ;;
     "safe-hash")
       need_cmd curl
@@ -39,6 +40,34 @@ install_package() {
       err "Unknown package: $package"
       ;;
   esac
+}
+
+# Loud, bold notice (on stderr) telling users how to remove Aderyn.
+# Colors are only used when stderr is a terminal.
+aderyn_retirement_notice() {
+  local bold="" reset=""
+  if [ -t 2 ]; then
+    bold="$(printf '\033[1;31m')"
+    reset="$(printf '\033[0m')"
+  fi
+
+  {
+    printf '\n%s' "$bold"
+    cat <<'NOTICE'
+============================================================================
+  ADERYN HAS BEEN RETIRED AND IS NO LONGER MAINTAINED
+  Cyfrinup no longer installs or updates it.
+  IT IS NOT REMOVED AUTOMATICALLY. TO UNINSTALL IT, RUN:
+
+    rm -f "${CARGO_HOME:-$HOME/.cargo}/bin/aderyn" "${CARGO_HOME:-$HOME/.cargo}/bin/aderyn-update"
+    rm -f "$HOME/.cyfrin/bin/aderyn"
+    rm -rf "${XDG_CONFIG_HOME:-$HOME/.config}/aderyn"
+
+  Installed it with Homebrew, npm or cargo? Uninstall it with that tool.
+============================================================================
+NOTICE
+    printf '%s\n' "$reset"
+  } >&2
 }
 
 say() {
